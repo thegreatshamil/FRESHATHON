@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Doctor Component</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="Doctor Component">
+                <div class="logo-text">
+                    <span class="logo-main">Doctor Component</span>
+                    <span class="logo-sub">AI Component Replacer</span>
+                </div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="ai-chat.html" class="nav-link">AI Assistant</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="auth-btn btn btn-secondary" onclick="auth.openAuthModal()">Sign In</button>
+                <div class="user-menu" style="display: none;">
+                    <img src="images/default-avatar.png" alt="User" class="user-avatar">
+                    <span class="user-name"></span>
+                    <div class="user-dropdown">
+                        <a href="profile.html">Profile</a>
+                        <a href="#" onclick="auth.logout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <section class="profile-header">
+        <div class="container">
+            <div class="profile-card">
+                <div class="profile-avatar-wrapper">
+                    <img src="images/default-avatar.png" alt="Profile" class="profile-avatar-large" id="profileAvatar">
+                    <label class="avatar-upload-btn" title="Change photo">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                        <input type="file" id="avatarUpload" accept="image/*" hidden>
+                    </label>
+                </div>
+                
+                <div class="profile-info">
+                    <h1 id="profileName">User</h1>
+                    <p class="profile-email" id="profileEmail"></p>
+                    <div class="profile-badges">
+                        <span class="badge" id="profileUserType">Member</span>
+                        <span class="badge badge-secondary">
+                            Joined <span id="joinDate"></span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="btn btn-secondary" id="logoutBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <span class="stat-value" id="statPosts">0</span>
+                    <span class="stat-label">Posts</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="statComments">0</span>
+                    <span class="stat-label">Comments</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="statSaved">0</span>
+                    <span class="stat-label">Saved</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="statReputation">0</span>
+                    <span class="stat-label">Reputation</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Content -->
+    <section class="profile-content">
+        <div class="container">
+            <div class="profile-tabs">
+                <button class="profile-tab-btn active" data-tab="overview">Overview</button>
+                <button class="profile-tab-btn" data-tab="activity">Activity</button>
+                <button class="profile-tab-btn" data-tab="saved">Saved Posts</button>
+                <button class="profile-tab-btn" data-tab="components">Components</button>
+                <button class="profile-tab-btn" data-tab="settings">Settings</button>
+            </div>
+            
+            <!-- Overview Panel -->
+            <div class="profile-tab-panel active" id="overviewPanel">
+                <div class="overview-grid">
+                    <div class="overview-card">
+                        <h3>Recent Posts</h3>
+                        <div class="recent-posts" id="recentPosts">
+                            <div class="empty-state">
+                                <p>No posts yet</p>
+                                <a href="blog.html" class="btn btn-primary">Create Your First Post</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card">
+                        <h3>Recent Activity</h3>
+                        <div class="recent-activity" id="recentActivity">
+                            <p class="empty-text">No recent activity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activity Panel -->
+            <div class="profile-tab-panel" id="activityPanel">
+                <div class="activity-list" id="allActivity">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <p>No activity yet</p>
+                        <span>Your posts and comments will appear here</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Saved Posts Panel -->
+            <div class="profile-tab-panel" id="savedPanel">
+                <div class="saved-posts-list" id="savedPostsList">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <p>No saved posts</p>
+                        <span>Bookmark posts to read later</span>
+                        <a href="blog.html" class="btn btn-primary">Browse Posts</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Components Panel -->
+            <div class="profile-tab-panel" id="componentsPanel">
+                <div class="saved-components-list" id="savedComponentsList">
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                            <rect x="9" y="9" width="6" height="6"></rect>
+                            <line x1="9" y1="1" x2="9" y2="4"></line>
+                            <line x1="15" y1="1" x2="15" y2="4"></line>
+                            <line x1="9" y1="20" x2="9" y2="23"></line>
+                            <line x1="15" y1="20" x2="15" y2="23"></line>
+                            <line x1="20" y1="9" x2="23" y2="9"></line>
+                            <line x1="20" y1="14" x2="23" y2="14"></line>
+                            <line x1="1" y1="9" x2="4" y2="9"></line>
+                            <line x1="1" y1="14" x2="4" y2="14"></line>
+                        </svg>
+                        <p>No saved components</p>
+                        <span>Save components for quick access</span>
+                        <a href="index.html" class="btn btn-primary">Find Components</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Panel -->
+            <div class="profile-tab-panel" id="settingsPanel">
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3>Profile Information</h3>
+                        <form id="profileForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editFirstName">First Name</label>
+                                    <input type="text" id="editFirstName" name="firstName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editLastName">Last Name</label>
+                                    <input type="text" id="editLastName" name="lastName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editDisplayName">Display Name</label>
+                                <input type="text" id="editDisplayName" name="displayName">
+                            </div>
+                            <div class="form-group">
+                                <label for="editBio">Bio</label>
+                                <textarea id="editBio" name="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="editWebsite">Website</label>
+                                <input type="url" id="editWebsite" name="website" placeholder="https://example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="editLocation">Location</label>
+                                <input type="text" id="editLocation" name="location" placeholder="City, Country">
+                            </div>
+                            <div class="form-group">
+                                <label for="editUserType">I am a...</label>
+                                <select id="editUserType" name="userType">
+                                    <option value="prefer-not-say">Prefer not to say</option>
+                                    <option value="manufacturer">Manufacturer</option>
+                                    <option value="electrician">Electrician</option>
+                                    <option value="engineer">Engineer</option>
+                                    <option value="hobbyist">Hobbyist</option>
+                                    <option value="student">Student</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="btn-text">Save Changes</span>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3>Change Password</h3>
+                        <form id="passwordForm">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" name="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="btn-text">Update Password</span>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="settings-card danger-zone">
+                        <h3>Danger Zone</h3>
+                        <div class="danger-item">
+                            <div>
+                                <h4>Delete Account</h4>
+                                <p>Once deleted, your account cannot be recovered.</p>
+                            </div>
+                            <button class="btn btn-danger" id="deleteAccountBtn">Delete Account</button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3>Account Information</h3>
+                        <div class="info-item">
+                            <span class="info-label">User ID</span>
+                            <div class="info-value">
+                                <code id="userIdDisplay"></code>
+                                <button class="btn btn-icon" id="copyUserId" title="Copy">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <img src="images/logo.png" alt="Doctor Component">
+                        <div class="logo-text">
+                            <span class="logo-main">Doctor Component</span>
+                            <span class="logo-sub">AI Component Replacer</span>
+                        </div>
+                    </a>
+                    <p>AI-powered platform for finding electronic component replacements.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="ai-chat.html">AI Assistant</a>
+                        <a href="blog.html">Blog</a>
+                        <a href="profile.html">Profile</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                        <a href="#">Support</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <a href="#">About</a>
+                        <a href="#">Contact</a>
+                        <a href="#">Privacy</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Doctor Component. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content auth-modal">
+            <button class="modal-close">&times;</button>
+            
+            <div class="auth-tabs">
+                <button class="tab-btn active" data-tab="login">Sign In</button>
+                <button class="tab-btn" data-tab="register">Create Account</button>
+            </div>
+            
+            <div class="tab-panel active" id="loginPanel">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required placeholder="••••••••">
+                    </div>
+                    <div class="form-error"></div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span class="btn-text">Sign In</span>
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>or continue with</span>
+                </div>
+                
+                <div class="social-login">
+                    <button class="social-btn" data-provider="google">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Google
+                    </button>
+                    <button class="social-btn" data-provider="github">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub
+                    </button>
+                </div>
+                
+                <button type="button" class="guest-btn">
+                    Continue as Guest
+                </button>
+            </div>
+            
+            <div class="tab-panel" id="registerPanel">
+                <form id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="registerFirstName">First Name</label>
+                            <input type="text" id="registerFirstName" name="firstName" required placeholder="John">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerLastName">Last Name</label>
+                            <input type="text" id="registerLastName" name="lastName" required placeholder="Doe">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" name="email" required placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" name="password" required placeholder="••••••••" minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerUserType">I am a...</label>
+                        <select id="registerUserType" name="userType">
+                            <option value="prefer-not-say">Prefer not to say</option>
+                            <option value="manufacturer">Manufacturer</option>
+                            <option value="electrician">Electrician</option>
+                            <option value="engineer">Engineer</option>
+                            <option value="hobbyist">Hobbyist</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    <div class="form-error"></div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span class="btn-text">Create Account</span>
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>or sign up with</span>
+                </div>
+                
+                <div class="social-login">
+                    <button class="social-btn" data-provider="google">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Google
+                    </button>
+                    <button class="social-btn" data-provider="github">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/blog.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

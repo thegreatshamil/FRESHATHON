@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat | Doctor Component</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+</head>
+<body class="ai-chat-body">
+    <!-- AI Working Border Effect -->
+    <div class="ai-border-effect" id="ai-border-effect"></div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Doctor Component">
+                <span>Doctor Component</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="ai-chat.html" class="nav-link active">AI Chat</a>
+                <a href="profile.html" class="nav-link" id="profile-link" style="display: none;">Profile</a>
+                <a href="login.html" class="nav-link btn-signin" id="signin-link">Sign In</a>
+                <div class="user-menu" id="user-menu" style="display: none;">
+                    <img id="nav-avatar" src="images/default-avatar.png" alt="Profile">
+                    <div class="user-dropdown">
+                        <a href="profile.html">My Profile</a>
+                        <a href="#" onclick="logout()">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" onclick="toggleNav()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Chat Container -->
+    <main class="ai-chat-main">
+        <!-- Sidebar -->
+        <aside class="chat-sidebar">
+            <div class="sidebar-header">
+                <img src="images/ai-mascot.png" alt="Dr. Chip" class="sidebar-avatar">
+                <div class="sidebar-info">
+                    <h3>Dr. Chip</h3>
+                    <span class="status">
+                        <span class="status-dot"></span>
+                        Online
+                    </span>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h4>Quick Topics</h4>
+                <div class="quick-topics">
+                    <button class="topic-btn" onclick="sendQuickMessage('What is EOL?')">
+                        <i class="fas fa-question-circle"></i>
+                        <span>What is EOL?</span>
+                    </button>
+                    <button class="topic-btn" onclick="sendQuickMessage('How to read datasheets?')">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reading Datasheets</span>
+                    </button>
+                    <button class="topic-btn" onclick="sendQuickMessage('Find replacement for 2N2222')">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Find Replacements</span>
+                    </button>
+                    <button class="topic-btn" onclick="sendQuickMessage('Explain transistor basics')">
+                        <i class="fas fa-microchip"></i>
+                        <span>Transistor Basics</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Popular Components</h4>
+                <div class="component-list">
+                    <button class="component-btn" onclick="sendQuickMessage('Tell me about 2N2222')">2N2222</button>
+                    <button class="component-btn" onclick="sendQuickMessage('Tell me about LM358')">LM358</button>
+                    <button class="component-btn" onclick="sendQuickMessage('Tell me about NE555')">NE555</button>
+                    <button class="component-btn" onclick="sendQuickMessage('Tell me about 7805')">7805</button>
+                    <button class="component-btn" onclick="sendQuickMessage('Tell me about BC547')">BC547</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4>Recent Chats</h4>
+                <div class="recent-chats" id="recent-chats">
+                    <!-- Recent chats loaded here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <img src="images/ai-mascot.png" alt="Dr. Chip" class="header-avatar">
+                    <div>
+                        <h2>Dr. Chip</h2>
+                        <span class="ai-status">AI Assistant powered by Gemini</span>
+                    </div>
+                </div>
+                <button class="btn-clear" onclick="clearChat()" title="Clear chat">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="messages-container" id="messages-container">
+                <div class="welcome-message">
+                    <img src="images/ai-mascot.png" alt="Dr. Chip">
+                    <h3>Hello! I'm Dr. Chip</h3>
+                    <p>Your AI assistant for electronic components. I can help you with:</p>
+                    <ul>
+                        <li>Finding EOL component replacements</li>
+                        <li>Explaining component specifications</li>
+                        <li>Reading and analyzing datasheets</li>
+                        <li>Answering electronics questions</li>
+                    </ul>
+                    <span class="hint">Select a topic or type your question below</span>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                <div class="typing-avatar">
+                    <img src="images/ai-mascot.png" alt="Dr. Chip">
+                </div>
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-area">
+                <form class="chat-form" id="chat-form" onsubmit="handleChatSubmit(event)">
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" placeholder="Ask Dr. Chip anything..." autocomplete="off">
+                        <button type="submit" class="btn-send">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+                <p class="input-hint">Press Enter to send • Dr. Chip can make mistakes, verify important info</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="gemini-ai.js"></script>
+    <script>
+        // Load recent chats from localStorage
+        function loadRecentChats() {
+            const recentChats = JSON.parse(localStorage.getItem('recentChats') || '[]');
+            const container = document.getElementById('recent-chats');
+            
+            if (recentChats.length === 0) {
+                container.innerHTML = '<p class="no-recent">No recent chats</p>';
+                return;
+            }
+            
+            container.innerHTML = recentChats.slice(0, 5).map(chat => `
+                <div class="recent-chat-item" onclick="sendQuickMessage('${chat}')">
+                    <i class="fas fa-comment"></i>
+                    <span>${chat.substring(0, 30)}${chat.length > 30 ? '...' : ''}</span>
+                </div>
+            `).join('');
+        }
+
+        // Send quick message
+        function sendQuickMessage(message) {
+            const input = document.getElementById('chat-input');
+            input.value = message;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        // Clear chat
+        function clearChat() {
+            const container = document.getElementById('messages-container');
+            container.innerHTML = `
+                <div class="welcome-message">
+                    <img src="images/ai-mascot.png" alt="Dr. Chip">
+                    <h3>Chat Cleared</h3>
+                    <p>Start a new conversation with Dr. Chip</p>
+                </div>
+            `;
+            showToast('Chat cleared', 'info');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecentChats();
+            document.getElementById('chat-input').focus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Component | AI Component Replacer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Doctor Component">
+                <span>Doctor Component</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="ai-chat.html" class="nav-link">AI Chat</a>
+                <a href="profile.html" class="nav-link" id="profile-link" style="display: none;">Profile</a>
+                <a href="login.html" class="nav-link btn-signin" id="signin-link">Sign In</a>
+                <div class="user-menu" id="user-menu" style="display: none;">
+                    <img id="nav-avatar" src="images/default-avatar.png" alt="Profile">
+                    <div class="user-dropdown">
+                        <a href="profile.html">My Profile</a>
+                        <a href="#" onclick="logout()">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" onclick="toggleNav()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="hero-bg">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-logo-wrapper">
+                <img src="images/logo.png" alt="Doctor Component" class="hero-logo">
+                <div class="logo-glow"></div>
+            </div>
+            <h1 class="hero-title">Doctor Component</h1>
+            <p class="hero-subtitle">AI Component Replacer</p>
+            <p class="hero-description">Find the perfect replacement for End-of-Life electronic components with AI-powered analysis</p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">50K+</span>
+                    <span class="stat-label">Components</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">120K+</span>
+                    <span class="stat-label">Replacements</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">AI</span>
+                    <span class="stat-label">Powered</span>
+                </div>
+            </div>
+            <div class="hero-cta">
+                <a href="#search-section" class="btn-primary">
+                    <i class="fas fa-search"></i>
+                    <span>Find Replacement</span>
+                </a>
+                <a href="ai-chat.html" class="btn-secondary">
+                    <i class="fas fa-robot"></i>
+                    <span>Ask Dr. Chip</span>
+                </a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll to explore</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section" id="search-section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">Search</span>
+                <h2>Find Component Replacements</h2>
+                <p>Enter a component number to find EOL alternatives</p>
+            </div>
+            
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-microchip search-icon"></i>
+                    <input type="text" id="component-search" placeholder="e.g., 2N2222, LM358, NE555..." autocomplete="off">
+                    <button class="btn-search" onclick="performSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="search-suggestions" id="search-suggestions"></div>
+            </div>
+            
+            <div class="quick-tags">
+                <span>Popular:</span>
+                <button class="tag" onclick="quickSearch('2N2222')">2N2222</button>
+                <button class="tag" onclick="quickSearch('LM358')">LM358</button>
+                <button class="tag" onclick="quickSearch('NE555')">NE555</button>
+                <button class="tag" onclick="quickSearch('7805')">7805</button>
+                <button class="tag" onclick="quickSearch('BC547')">BC547</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results-section" style="display: none;">
+        <div class="section-container">
+            <div class="results-grid">
+                <!-- Original Component -->
+                <div class="result-card original-card">
+                    <div class="card-header">
+                        <span class="card-badge eol">EOL</span>
+                        <h3 id="result-name">Component</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="spec-row">
+                            <span class="spec-label">Type</span>
+                            <span class="spec-value" id="result-type">-</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Package</span>
+                            <span class="spec-value" id="result-package">-</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Manufacturer</span>
+                            <span class="spec-value" id="result-manufacturer">-</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">EOL Date</span>
+                            <span class="spec-value" id="result-eol">-</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-outline" onclick="viewDatasheet()">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Datasheet</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Replacements -->
+                <div class="replacements-container" id="replacements-container">
+                    <!-- Replacements loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">Features</span>
+                <h2>Why Doctor Component?</h2>
+                <p>Powered by AI to help you find the perfect replacement</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Analysis</h3>
+                    <p>Get intelligent recommendations based on specification matching and compatibility analysis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Extensive Database</h3>
+                    <p>Access thousands of components and verified replacement options</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Dr. Chip AI</h3>
+                    <p>Chat with our AI assistant for instant answers to your component questions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Community</h3>
+                    <p>Share experiences and learn from other engineers and hobbyists</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant CTA -->
+    <section class="ai-cta-section">
+        <div class="section-container">
+            <div class="ai-cta-card">
+                <div class="ai-cta-content">
+                    <img src="images/ai-mascot.png" alt="Dr. Chip" class="ai-cta-avatar">
+                    <div class="ai-cta-text">
+                        <h2>Need Help Finding a Replacement?</h2>
+                        <p>Chat with Dr. Chip, our AI assistant. Ask anything about components, datasheets, or circuit design.</p>
+                    </div>
+                </div>
+                <a href="ai-chat.html" class="btn-primary btn-large">
+                    <i class="fas fa-robot"></i>
+                    <span>Chat with Dr. Chip</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="images/logo.png" alt="Doctor Component">
+                <span>Doctor Component</span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="ai-chat.html">AI Chat</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Doctor Component. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

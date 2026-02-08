@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Doctor Component</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="blog-body">
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Doctor Component">
+                <span>Doctor Component</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="blog.html" class="nav-link active">Blog</a>
+                <a href="ai-chat.html" class="nav-link">AI Chat</a>
+                <a href="profile.html" class="nav-link" id="profile-link" style="display: none;">Profile</a>
+                <a href="login.html" class="nav-link btn-signin" id="signin-link">Sign In</a>
+                <div class="user-menu" id="user-menu" style="display: none;">
+                    <img id="nav-avatar" src="images/default-avatar.png" alt="Profile">
+                    <div class="user-dropdown">
+                        <a href="profile.html">My Profile</a>
+                        <a href="#" onclick="logout()">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" onclick="toggleNav()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Blog Header -->
+    <header class="blog-header">
+        <div class="header-content">
+            <span class="header-badge">Community</span>
+            <h1 class="header-title">EOL Discussions</h1>
+            <p class="header-desc">Share experiences, ask questions, and discover replacements together</p>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="total-posts">0</span>
+                    <span class="stat-label">Discussions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="total-users">0</span>
+                    <span class="stat-label">Members</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="today-posts">0</span>
+                    <span class="stat-label">Today</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-wave">
+            <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+                <path d="M0,50 C360,100 720,0 1080,50 C1260,75 1380,60 1440,50 L1440,100 L0,100 Z" fill="var(--bg-primary)"/>
+            </svg>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="blog-main">
+        <!-- Create Post Section -->
+        <section class="create-post-section" id="create-post-section">
+            <div class="create-post-card">
+                <div class="create-post-header">
+                    <img src="images/ai-mascot.png" alt="AI" class="create-post-avatar">
+                    <div class="create-post-info">
+                        <h3>Start a Discussion</h3>
+                        <p>Share your EOL component experiences</p>
+                    </div>
+                </div>
+                <form id="post-form" class="post-form">
+                    <div class="form-row">
+                        <div class="input-wrapper">
+                            <input type="text" id="post-title" placeholder=" " required>
+                            <label for="post-title">Title</label>
+                            <span class="input-focus-border"></span>
+                        </div>
+                    </div>
+                    <div class="form-row two-col">
+                        <div class="input-wrapper">
+                            <input type="text" id="post-component" placeholder=" ">
+                            <label for="post-component">Component (optional)</label>
+                            <span class="input-focus-border"></span>
+                        </div>
+                        <div class="input-wrapper">
+                            <select id="post-category" required>
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="eol-announcement">EOL Announcement</option>
+                                <option value="replacement">Replacement Found</option>
+                                <option value="question">Question</option>
+                                <option value="experience">Experience</option>
+                            </select>
+                            <span class="input-focus-border"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-wrapper textarea-wrapper">
+                            <textarea id="post-content" rows="4" placeholder=" " required></textarea>
+                            <label for="post-content">Share your thoughts...</label>
+                            <span class="input-focus-border"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Post Discussion</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Guest Notice -->
+        <section class="guest-notice" id="guest-notice">
+            <div class="notice-card">
+                <i class="fas fa-info-circle"></i>
+                <p>Sign in to post discussions and join the conversation</p>
+                <a href="login.html" class="btn-outline">Sign In</a>
+            </div>
+        </section>
+
+        <!-- Filters -->
+        <section class="filters-section">
+            <div class="filters-container">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All</button>
+                    <button class="filter-tab" data-filter="eol-announcement">EOL</button>
+                    <button class="filter-tab" data-filter="replacement">Replacements</button>
+                    <button class="filter-tab" data-filter="question">Questions</button>
+                    <button class="filter-tab" data-filter="experience">Experiences</button>
+                </div>
+                <div class="sort-dropdown">
+                    <select id="sort-select">
+                        <option value="newest">Newest First</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Posts Grid -->
+        <section class="posts-section">
+            <div class="posts-grid" id="posts-grid">
+                <!-- Posts will be loaded here -->
+            </div>
+            <div class="load-more-container">
+                <button class="btn-load-more" id="load-more-btn">
+                    <span>Load More</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Post Detail Modal -->
+    <div class="modal post-modal" id="post-modal">
+        <div class="modal-overlay" onclick="closePostModal()"></div>
+        <div class="modal-content post-content">
+            <button class="modal-close" onclick="closePostModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="post-detail" id="post-detail">
+                <!-- Post content loaded here -->
+            </div>
+            <div class="comments-section">
+                <h3><i class="fas fa-comments"></i> Comments</h3>
+                <div class="comments-list" id="comments-list">
+                    <!-- Comments loaded here -->
+                </div>
+                <form class="comment-form" id="comment-form">
+                    <div class="input-wrapper">
+                        <textarea id="comment-input" placeholder="Add a comment..." rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="images/logo.png" alt="Doctor Component">
+                <span>Doctor Component</span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="ai-chat.html">AI Chat</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Doctor Component. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="blog.js"></script>
+</body>
+</html>

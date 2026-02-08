@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Doctor Component</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+</head>
+<body class="profile-body">
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Doctor Component">
+                <span>Doctor Component</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="ai-chat.html" class="nav-link">AI Chat</a>
+                <a href="profile.html" class="nav-link active">Profile</a>
+                <div class="user-menu" id="user-menu">
+                    <img id="nav-avatar" src="images/default-avatar.png" alt="Profile">
+                    <div class="user-dropdown">
+                        <a href="profile.html">My Profile</a>
+                        <a href="#" onclick="logout()">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" onclick="toggleNav()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <header class="profile-header">
+        <div class="profile-cover"></div>
+        <div class="profile-info-container">
+            <div class="profile-avatar-wrapper">
+                <img id="profile-avatar" src="images/default-avatar.png" alt="Profile">
+                <button class="avatar-edit-btn" onclick="document.getElementById('avatar-upload').click()">
+                    <i class="fas fa-camera"></i>
+                </button>
+                <input type="file" id="avatar-upload" accept="image/*" hidden>
+            </div>
+            <div class="profile-info">
+                <h1 id="profile-name">Loading...</h1>
+                <span class="profile-badge" id="profile-type">User</span>
+                <p id="profile-email">-</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="profile-main">
+        <div class="profile-grid">
+            <!-- Sidebar -->
+            <aside class="profile-sidebar">
+                <nav class="profile-nav">
+                    <button class="nav-item active" data-section="overview">
+                        <i class="fas fa-user"></i>
+                        <span>Overview</span>
+                    </button>
+                    <button class="nav-item" data-section="activity">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Activity</span>
+                    </button>
+                    <button class="nav-item" data-section="saved">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Saved</span>
+                    </button>
+                    <button class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                </nav>
+
+                <div class="stats-card">
+                    <h3>Your Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-posts">0</span>
+                            <span class="stat-label">Posts</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-comments">0</span>
+                            <span class="stat-label">Comments</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-saved">0</span>
+                            <span class="stat-label">Saved</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="profile-content">
+                <!-- Overview Section -->
+                <section class="content-section active" id="overview-section">
+                    <div class="content-card">
+                        <h3>Profile Information</h3>
+                        <form id="profile-form">
+                            <div class="form-row two-col">
+                                <div class="input-wrapper">
+                                    <input type="text" id="edit-firstname" placeholder=" ">
+                                    <label>First Name</label>
+                                    <span class="input-focus-border"></span>
+                                </div>
+                                <div class="input-wrapper">
+                                    <input type="text" id="edit-lastname" placeholder=" ">
+                                    <label>Last Name</label>
+                                    <span class="input-focus-border"></span>
+                                </div>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="email" id="edit-email" disabled>
+                                <label>Email</label>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="tel" id="edit-phone" placeholder=" ">
+                                <label>Phone Number</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="text" id="edit-company" placeholder=" ">
+                                <label>Company/Organization</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <div class="input-wrapper textarea-wrapper">
+                                <textarea id="edit-bio" rows="3" placeholder=" "></textarea>
+                                <label>Bio</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i>
+                                <span>Save Changes</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>Professional Information</h3>
+                        <form id="professional-form">
+                            <div class="input-wrapper">
+                                <select id="edit-usertype">
+                                    <option value="manufacturer">Manufacturer</option>
+                                    <option value="electrician">Electrician</option>
+                                    <option value="engineer">Electronics Engineer</option>
+                                    <option value="hobbyist">Electronics Hobbyist</option>
+                                    <option value="student">Student</option>
+                                    <option value="distributor">Component Distributor</option>
+                                    <option value="technician">Technician</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer-not-say">Prefer Not to Say</option>
+                                </select>
+                                <label>I am a...</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="text" id="edit-expertise" placeholder=" ">
+                                <label>Areas of Expertise</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i>
+                                <span>Save Changes</span>
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Activity Section -->
+                <section class="content-section" id="activity-section">
+                    <div class="content-card">
+                        <div class="activity-tabs">
+                            <button class="activity-tab active" data-tab="posts">My Posts</button>
+                            <button class="activity-tab" data-tab="comments">My Comments</button>
+                        </div>
+                        <div class="activity-content" id="activity-posts">
+                            <div class="empty-state">
+                                <i class="fas fa-pen"></i>
+                                <p>No posts yet</p>
+                            </div>
+                        </div>
+                        <div class="activity-content hidden" id="activity-comments">
+                            <div class="empty-state">
+                                <i class="fas fa-comment"></i>
+                                <p>No comments yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Saved Section -->
+                <section class="content-section" id="saved-section">
+                    <div class="content-card">
+                        <h3>Saved Components</h3>
+                        <div class="saved-grid" id="saved-grid">
+                            <div class="empty-state">
+                                <i class="fas fa-bookmark"></i>
+                                <p>No saved components yet</p>
+                                <a href="index.html" class="btn-outline">Find Components</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section class="content-section" id="settings-section">
+                    <div class="content-card">
+                        <h3>Change Password</h3>
+                        <form id="password-form">
+                            <div class="input-wrapper">
+                                <input type="password" id="current-password" placeholder=" " required>
+                                <label>Current Password</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="password" id="new-password" placeholder=" " required>
+                                <label>New Password</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirm-password" placeholder=" " required>
+                                <label>Confirm New Password</label>
+                                <span class="input-focus-border"></span>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-key"></i>
+                                <span>Update Password</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="content-card danger-zone">
+                        <h3>Danger Zone</h3>
+                        <div class="danger-item">
+                            <div>
+                                <h4>Delete Account</h4>
+                                <p>Permanently delete your account and all data</p>
+                            </div>
+                            <button class="btn-danger" onclick="showDeleteModal()">
+                                <i class="fas fa-trash"></i>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Account Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-overlay" onclick="closeDeleteModal()"></div>
+        <div class="modal-content">
+            <div class="modal-icon danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>Delete Account</h2>
+            <p>This action cannot be undone. All your data will be permanently deleted.</p>
+            <div class="input-wrapper">
+                <input type="text" id="delete-confirm" placeholder=" ">
+                <label>Type "DELETE" to confirm</label>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="images/logo.png" alt="Doctor Component">
+                <span>Doctor Component</span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="ai-chat.html">AI Chat</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Doctor Component. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
