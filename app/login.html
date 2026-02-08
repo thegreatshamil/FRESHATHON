@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
+
 <body class="auth-body">
     <!-- Animated Background -->
     <div class="auth-bg">
@@ -134,6 +136,19 @@
                     <span class="input-hint">At least 6 characters</span>
                 </div>
 
+                <!-- Confirm Password -->
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="reg-confirm-password" placeholder=" " required>
+                        <label for="reg-confirm-password">Confirm Password</label>
+                        <button type="button" class="toggle-password" onclick="togglePassword('reg-confirm-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <span class="input-focus-border"></span>
+                    </div>
+                </div>
+
                 <div class="input-group">
                     <div class="input-wrapper">
                         <i class="fas fa-briefcase input-icon"></i>
@@ -154,10 +169,21 @@
                     </div>
                 </div>
 
+                <!-- Company / Organization (optional) -->
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <i class="fas fa-building input-icon"></i>
+                        <input type="text" id="reg-company" placeholder=" ">
+                        <label for="reg-company">Company (optional)</label>
+                        <span class="input-focus-border"></span>
+                    </div>
+                </div>
+
                 <label class="checkbox-wrapper terms">
                     <input type="checkbox" id="accept-terms" required>
                     <span class="checkmark"></span>
-                    <span class="checkbox-label">I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a></span>
+                    <span class="checkbox-label">I agree to the <a href="#">Terms</a> and <a href="#">Privacy
+                            Policy</a></span>
                 </label>
 
                 <button type="submit" class="btn-auth btn-primary">
@@ -230,11 +256,11 @@
         document.querySelectorAll('.auth-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 const targetTab = tab.dataset.tab;
-                
+
                 // Update tabs
                 document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                
+
                 // Animate forms
                 const forms = document.querySelectorAll('.auth-form');
                 forms.forEach(form => {
@@ -253,7 +279,7 @@
             const input = document.getElementById(inputId);
             const type = input.type === 'password' ? 'text' : 'password';
             input.type = type;
-            
+
             const icon = input.parentElement.querySelector('.toggle-password i');
             icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
         }
@@ -281,4 +307,5 @@
         });
     </script>
 </body>
+
 </html>
