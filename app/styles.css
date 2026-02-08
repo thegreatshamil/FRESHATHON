@@ -928,6 +928,22 @@ button {
     position: relative;
     /* allow the auth page to scroll on small screens */
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile: keep card near top and allow page scroll when content is tall */
+@media (max-width: 640px) {
+    .auth-main {
+        align-items: flex-start;
+        padding-top: 24px;
+        padding-bottom: 48px;
+    }
+
+    .auth-card {
+        margin-top: 8px;
+        padding: 28px;
+        max-width: 100%;
+    }
 }
 
 .auth-bg {
